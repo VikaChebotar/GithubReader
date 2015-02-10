@@ -1,14 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/lib/com.example.viktoria.githubreader"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:layout_marginTop="38dp"
+    android:layout_marginBottom="10dp">
 
-    <com.example.viktoria.githubreader.utils.RoundedImageView
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       >
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="137dp"
+            android:layout_height="137dp"
+            android:src="@drawable/test"
+            app:border_width="1dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/usernameCompanyLabel"
+            app:border_color="#FF000000"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Username, Company"
+            android:id="@+id/usernameCompanyLabel"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveBtn"
+            android:layout_below="@id/profile_image"
+            android:src="@drawable/floppy"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+
+            android:layout_toLeftOf="@+id/profile_image"
+            android:layout_alignTop="@+id/profile_image"
+            android:layout_alignBottom="@+id/profile_image"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:text="31 followers"
+                android:id="@+id/followersLabel" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/openBrowserBtn"
+                android:src="@drawable/globe"
+                android:background="@android:color/transparent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_alignTop="@+id/profile_image"
+            android:layout_alignBottom="@+id/profile_image"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:text="143 followed"
+                android:id="@+id/followedLabel" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/shareBtn"
+                android:src="@drawable/share"
+                android:background="@android:color/transparent" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:src="@drawable/icon"
-        android:layout_centerHorizontal="true" />
+        android:textSize="18sp"
+        android:layout_marginTop="26dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="5dp"
+        android:text="Repositories"
+        android:id="@+id/repositoriesLabel" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/repositoriesList"
+        android:layout_marginTop="10dp"/>
 
 
-</RelativeLayout>
+</LinearLayout>
