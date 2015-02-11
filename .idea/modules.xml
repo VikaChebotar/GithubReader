@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GithubReader.iml" filepath="$PROJECT_DIR$/GithubReader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/circleLayout/circleLayout.iml" filepath="$PROJECT_DIR$/circleLayout/circleLayout.iml" />
     </modules>
   </component>
 </project>
