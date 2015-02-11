@@ -1,6 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@drawable/list_item_border">
 
-</LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Repository name"
+        android:singleLine="true"
+        android:layout_marginRight="10dp"
+        android:ellipsize="marquee"
+        android:layout_toLeftOf="@+id/forksCount"
+        android:id="@+id/repName"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:layout_below="@+id/repName"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/forksCount"
+        android:text="Language: Java"
+        android:id="@+id/repLang"
+        android:layout_alignParentLeft="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/star"
+        android:src="@drawable/star"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginRight="5dp"
+        android:layout_centerVertical="true"
+        android:text="31"
+        android:id="@+id/starsCount"
+        android:layout_toLeftOf="@+id/star" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fork"
+        android:src="@drawable/fork"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/starsCount"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginRight="5dp"
+        android:layout_centerVertical="true"
+        android:text="15"
+        android:id="@+id/forksCount"
+        android:layout_toLeftOf="@+id/fork" />
+
+</RelativeLayout>
