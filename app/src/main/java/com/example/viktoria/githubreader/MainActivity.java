@@ -1,7 +1,9 @@
 package com.example.viktoria.githubreader;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,6 +12,7 @@ import com.facebook.AppEventsLogger;
 import com.facebook.FacebookException;
 import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
+import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.WebDialog;
@@ -18,6 +21,7 @@ import com.facebook.widget.WebDialog;
 public class MainActivity extends Activity implements SearchFragment.OnSearchClickListener, UserProfileFragment.OnShareFbClickListener {
     public static final String TAG = "GITHUB_READER";
     private UiLifecycleHelper uiHelper;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,7 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
 
     @Override
     public void onSearchClicked(String username) {
-        UserProfileFragment userProfileFragment = new UserProfileFragment();
-        Bundle args = new Bundle();
-        args.putString("username", username);
-        userProfileFragment.setArguments(args);
-        getFragmentManager().beginTransaction().replace(R.id.content_frame, userProfileFragment,
-                "user_profile_fr").addToBackStack(
-                "user_profile_fr").commit();
+       new GetUserInfoAsyncTask().execute(username);
     }
 
     @Override
@@ -60,6 +58,25 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
 //                String postId = FacebookDialog.getNativeDialogPostId(data);
             }
         });
+    }
+
+    private Session.StatusCallback callback = new Session.StatusCallback() {
+        @Override
+        public void call(Session session, SessionState state,
+                         Exception exception) {
+            onSessionStateChange(session, state, exception);
+        }
+    };
+
+    private void onSessionStateChange(Session session, SessionState state,
+                                      Exception exception) {
+        if (state.isOpened()) {
+            // System.out.println("Logged in...");
+            publishFeedDialog(user);
+
+        } else if (state.isClosed()) {
+            // System.out.println("Logged out...");
+        }
     }
 
     @Override
@@ -94,6 +111,7 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
 
     @Override
     public void onShareClicked(User u) {
+        this.user = u;
         if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
             // Publish the post using the Share Dialog
@@ -105,12 +123,21 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
 
         } else {
             // Fallback. For example, publish the post using the Feed Dialog
-            publishFeedDialog(u);
+            Session session = Session.getActiveSession();
+            if (!session.isOpened() && !session.isClosed()) {
+                session.openForRead(new Session.OpenRequest(this).setCallback(callback));
+
+            } else {
+                Session.openActiveSession(this, true, callback);
+            }
+
         }
 
     }
 
+
     private void publishFeedDialog(User u) {
+
         Bundle params = new Bundle();
 
         params.putString("link", u.getHtml_url());
@@ -155,4 +182,52 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
                 .build();
         feedDialog.show();
     }
+
+    class GetUserInfoAsyncTask extends AsyncTask<String, Void, Integer> {
+        ProgressDialog pd;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity.this);
+            pd.show();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            if (ConnectionUtil.isConnected(MainActivity.this)) {
+
+                user = ConnectionUtil.getUserInfo(params[0]);
+                if (user.getRepos_url() != null && !user.getRepos_url().isEmpty()) {
+                    user.setRepositories(ConnectionUtil.getRepositories(user.getRepos_url()));
+                }
+                return ConnectionUtil.OK;
+
+            } else {
+                return ConnectionUtil.NO_INTERNET_CONNECTION;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Integer resultCode) {
+            super.onPostExecute(resultCode);
+            pd.cancel();
+            switch (resultCode) {
+                case ConnectionUtil.OK:
+                    UserProfileFragment userProfileFragment = new UserProfileFragment();
+                    Bundle args = new Bundle();
+                    args.putParcelable("user", user);
+                    userProfileFragment.setArguments(args);
+                    getFragmentManager().beginTransaction().replace(R.id.content_frame, userProfileFragment,
+                            "user_profile_fr").addToBackStack(
+                            "user_profile_fr").commit();
+                    break;
+            }
+
+
+        }
+    }
+
+
 }
