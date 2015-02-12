@@ -38,7 +38,7 @@ public class UserProfileFragment extends Fragment {
 
     // interface to communicate with other fragment through activity, fragment shouldn't know about parent activity
     public interface OnShareFbClickListener {
-        public void onShareClicked(User u);
+        public void onShareClicked();
     }
 
     @Override
@@ -54,55 +54,55 @@ public class UserProfileFragment extends Fragment {
         shareBtn = (ImageButton) rootView.findViewById(R.id.shareBtn);
         repList = (ListView) rootView.findViewById(R.id.repositoriesList);
 
-   if (user.getCompany() != null & !user.getCompany().isEmpty()) {
-        usernameCompany.setText(user.getLogin() + ", " + user.getCompany());
-    } else {
-        usernameCompany.setText(user.getLogin());
-    }
-    followers.setText(user.getFollowers() + System.getProperty("line.separator") + " followers" + System.getProperty("line.separator"));
-    following.setText(user.getFollowing() + System.getProperty("line.separator") + " following" + System.getProperty("line.separator"));
-    if (user.getAvatar_url() != null && !user.getAvatar_url().isEmpty()) {
-        new DownloadImageTask(avatar)
-                .execute(user.getAvatar_url());
-    }
-    openBrowserBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String url = user.getHtml_url();
-            if (url != null && !url.isEmpty()) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
+        if (user.getCompany() != null & !user.getCompany().isEmpty()) {
+            usernameCompany.setText(user.getLogin() + ", " + user.getCompany());
+        } else {
+            usernameCompany.setText(user.getLogin());
         }
-    });
-    saveBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new AsyncTask() {
-                @Override
-                protected Object doInBackground(Object[] params) {
-                    DatabaseHandler dh = DatabaseHandler.getInstance(getActivity());
-                    if (!dh.checkIfExists(user)) {
-                        dh.addUsers(user);
-                    } else {
-                        //TODO
-                    }
-
-                    return null;
+        followers.setText(user.getFollowers() + System.getProperty("line.separator") + " followers" + System.getProperty("line.separator"));
+        following.setText(user.getFollowing() + System.getProperty("line.separator") + " following" + System.getProperty("line.separator"));
+        if (user.getAvatar_url() != null && !user.getAvatar_url().isEmpty()) {
+            new DownloadImageTask(avatar)
+                    .execute(user.getAvatar_url());
+        }
+        openBrowserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = user.getHtml_url();
+                if (url != null && !url.isEmpty()) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
                 }
-            }.execute();
+            }
+        });
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AsyncTask() {
+                    @Override
+                    protected Object doInBackground(Object[] params) {
+                        DatabaseHandler dh = DatabaseHandler.getInstance(getActivity());
+                        if (!dh.checkIfExists(user)) {
+                            dh.addUsers(user);
+                        } else {
+                            //TODO
+                        }
 
-        }
+                        return null;
+                    }
+                }.execute();
 
-    });
-    shareBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mCallback.onShareClicked(user);
-        }
-    });
-        if(user.getRepositories()!=null) {
+            }
+
+        });
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onShareClicked();
+            }
+        });
+        if (user.getRepositories() != null) {
             RepositoriesListAdapter adapter = new RepositoriesListAdapter(getActivity(), R.layout.repository_item, user.getRepositories());
             repList.setVisibility(View.VISIBLE);
             repList.setAdapter(adapter);
@@ -134,7 +134,6 @@ public class UserProfileFragment extends Fragment {
     }
 
 
-
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         CircleImageView bmImage;
         ProgressBar pb;
@@ -148,7 +147,6 @@ public class UserProfileFragment extends Fragment {
             super.onPreExecute();
             pb = (ProgressBar) rootView.findViewById(R.id.progressBar3);
             pb.setVisibility(View.VISIBLE);
-
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -158,18 +156,33 @@ public class UserProfileFragment extends Fragment {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+                Log.e(MainActivity.TAG, e.getMessage());
             }
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            if (result != null) {
+                bmImage.setImageBitmap(result);
+            } else {
+                bmImage.setImageDrawable(getResources().getDrawable(R.drawable.avatar_placeholder));
+            }
             pb.setVisibility(View.GONE);
         }
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("user", user);
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            user = savedInstanceState.getParcelable("user");
+        }
+    }
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
@@ -192,7 +205,6 @@ public class UserProfileFragment extends Fragment {
         listView.requestLayout();
 
     }
-
 
 
 }

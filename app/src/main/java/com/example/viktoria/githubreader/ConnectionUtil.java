@@ -26,7 +26,8 @@ public class ConnectionUtil {
 
     public static final int OK = 1;
     public static final int NO_INTERNET_CONNECTION = 2;
-    public static final int SERVER_ERROR = 3;
+    public static final int EXCEPTION = 3;
+    public static final int NOT_FOUND = 4;
 
 
     public static boolean isConnected(Context mContext) {
@@ -39,88 +40,64 @@ public class ConnectionUtil {
             return false;
     }
 
-    public static User getUserInfo(String username) {
+    public static User getUserInfo(String username) throws Exception {
         String u = "https://api.github.com/users/" + username;
         User user;
         Log.d(MainActivity.TAG, u);
-        try {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpget = new HttpGet(u);
-            //httpget.addHeader();
-            HttpResponse response = httpclient.execute(httpget);
-            int status = response.getStatusLine().getStatusCode();
-            Log.d(MainActivity.TAG, "status: " + status);
-            HttpEntity entity = response.getEntity();
-            String resp = EntityUtils.toString(entity);
-            Log.d(MainActivity.TAG, "resp: " + resp);
-            if (status >= 200 && status < 300) {
-                try {
-                    JSONObject obj = new JSONObject(resp);
-                    user = new User();
-                    user.setLogin(obj.getString("login"));
-                    user.setCompany(obj.optString("company", ""));
-                    user.setAvatar_url(obj.optString("avatar_url", ""));
-                    user.setHtml_url(obj.optString("html_url", ""));
-                    user.setRepos_url(obj.optString("repos_url", ""));
-                    user.setFollowers(obj.getInt("followers"));
-                    user.setFollowing(obj.getInt("following"));
-                    return user;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                //TODO
-            }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(u);
+        HttpResponse response = httpclient.execute(httpget);
+        int status = response.getStatusLine().getStatusCode();
+        Log.d(MainActivity.TAG, "status: " + status);
+        HttpEntity entity = response.getEntity();
+        String resp = EntityUtils.toString(entity);
+        Log.d(MainActivity.TAG, "resp: " + resp);
+        if (status >= 200 && status < 300) {
+            JSONObject obj = new JSONObject(resp);
+            user = new User();
+            user.setLogin(obj.getString("login"));
+            user.setCompany(obj.optString("company", ""));
+            user.setAvatar_url(obj.optString("avatar_url", ""));
+            user.setHtml_url(obj.optString("html_url", ""));
+            user.setRepos_url(obj.optString("repos_url", ""));
+            user.setFollowers(obj.getInt("followers"));
+            user.setFollowing(obj.getInt("following"));
+            return user;
+        } else if (status == 404) {
+            return null;
+        } else {
+            throw new Exception("getUserInfo: "+resp);
         }
-        return null;
     }
-    public static ArrayList<Repository> getRepositories(String url){
+
+    public static ArrayList<Repository> getRepositories(String url) throws Exception {
         String u = url + "?sort=updated";
         Log.d(MainActivity.TAG, u);
         ArrayList<Repository> repositories;
-        try {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpget = new HttpGet(u);
-            HttpResponse response = httpclient.execute(httpget);
-            int status = response.getStatusLine().getStatusCode();
-            Log.d(MainActivity.TAG, "status: " + status);
-            HttpEntity entity = response.getEntity();
-            String resp = EntityUtils.toString(entity);
-            Log.d(MainActivity.TAG, "resp: " + resp);
-            if (status >= 200 && status < 300) {
-                try {
-                    JSONArray array = new JSONArray(resp);
-                   repositories = new ArrayList<Repository>(array.length());
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject obj = array.getJSONObject(i);
-                        Repository r = new Repository();
-                        r.setName(obj.getString("name"));
-                        r.setLanguage(obj.optString("language", ""));
-                        r.setForks(obj.getInt("forks_count"));
-                        r.setWatchers(obj.getInt("watchers_count"));
-                        repositories.add(r);
-                    }
-
-                    return repositories;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                //TODO
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(u);
+        HttpResponse response = httpclient.execute(httpget);
+        int status = response.getStatusLine().getStatusCode();
+        Log.d(MainActivity.TAG, "status: " + status);
+        HttpEntity entity = response.getEntity();
+        String resp = EntityUtils.toString(entity);
+        Log.d(MainActivity.TAG, "resp: " + resp);
+        if (status >= 200 && status < 300) {
+            JSONArray array = new JSONArray(resp);
+            repositories = new ArrayList<Repository>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                Repository r = new Repository();
+                r.setName(obj.getString("name"));
+                r.setLanguage(obj.optString("language", ""));
+                r.setForks(obj.getInt("forks_count"));
+                r.setWatchers(obj.getInt("watchers_count"));
+                repositories.add(r);
             }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return repositories;
+        } else {
+            throw new Exception("getRepositories: "+resp);
         }
-        return null;
+
     }
 }

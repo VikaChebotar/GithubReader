@@ -1,7 +1,11 @@
 package com.example.viktoria.githubreader;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +22,7 @@ import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.WebDialog;
 
 
-public class MainActivity extends Activity implements SearchFragment.OnSearchClickListener, UserProfileFragment.OnShareFbClickListener {
+public class MainActivity extends Activity implements SearchFragment.OnUserProfileOpenListener, UserProfileFragment.OnShareFbClickListener {
     public static final String TAG = "GITHUB_READER";
     private UiLifecycleHelper uiHelper;
     private User user;
@@ -29,16 +33,21 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
         uiHelper = new UiLifecycleHelper(this, null);
         uiHelper.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SearchFragment searchFragment = new SearchFragment();
-        getFragmentManager().beginTransaction().replace(R.id.content_frame, searchFragment,
-                "search_fr").commit();
-
+        if (savedInstanceState != null && savedInstanceState.containsKey("user") && savedInstanceState.getParcelable("user") != null) {
+            user = savedInstanceState.getParcelable("user");
+            //  showUserProfileFragment();
+        }
+        else {
+            FragmentManager fragmentManager = getFragmentManager();
+            SearchFragment searchFragment = (SearchFragment) fragmentManager.findFragmentByTag("search_fr");
+            if(searchFragment==null) {
+                searchFragment = new SearchFragment();
+            }
+            fragmentManager.beginTransaction().replace(R.id.content_frame, searchFragment,
+                    "search_fr").commit();
+        }
     }
 
-    @Override
-    public void onSearchClicked(String username) {
-       new GetUserInfoAsyncTask().execute(username);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -47,15 +56,13 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
         uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
             @Override
             public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-                Log.e("Activity", String.format("Error: %s", error.toString()));
+                Log.e(MainActivity.TAG, String.format("Error: %s", error.toString()));
             }
 
             @Override
             public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-                Log.i("Activity", "Success!");
-//                boolean didCancel = FacebookDialog.getNativeDialogDidComplete(data);
-//                String completionGesture = FacebookDialog.getNativeDialogCompletionGesture(data);
-//                String postId = FacebookDialog.getNativeDialogPostId(data);
+                String postId = FacebookDialog.getNativeDialogPostId(data);
+                Log.d(MainActivity.TAG, "Published story with id: " + postId);
             }
         });
     }
@@ -72,7 +79,7 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
                                       Exception exception) {
         if (state.isOpened()) {
             // System.out.println("Logged in...");
-            publishFeedDialog(user);
+            publishFeedDialog();
 
         } else if (state.isClosed()) {
             // System.out.println("Logged out...");
@@ -91,6 +98,9 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+        if (user != null) {
+            outState.putParcelable("user", user);
+        }
     }
 
 
@@ -110,17 +120,14 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
     }
 
     @Override
-    public void onShareClicked(User u) {
-        this.user = u;
+    public void onShareClicked() {
         if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
             // Publish the post using the Share Dialog
-
             FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-                    .setLink(u.getHtml_url())
+                    .setLink(user.getHtml_url())
                     .build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
-
         } else {
             // Fallback. For example, publish the post using the Feed Dialog
             Session session = Session.getActiveSession();
@@ -136,11 +143,11 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
     }
 
 
-    private void publishFeedDialog(User u) {
+    private void publishFeedDialog() {
 
         Bundle params = new Bundle();
 
-        params.putString("link", u.getHtml_url());
+        params.putString("link", user.getHtml_url());
 
         WebDialog feedDialog = (
                 new WebDialog.FeedDialogBuilder(this,
@@ -157,8 +164,9 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
                             final String postId = values.getString("post_id");
                             if (postId != null) {
                                 Toast.makeText(MainActivity.this,
-                                        "Posted story, id: " + postId,
+                                        "Published story, id: " + postId,
                                         Toast.LENGTH_SHORT).show();
+                                Log.d(MainActivity.TAG, "Published story with id: " + postId);
                             } else {
                                 // User clicked the Cancel button
                                 Toast.makeText(getApplicationContext(),
@@ -175,6 +183,7 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
                             Toast.makeText(getApplicationContext(),
                                     "Error posting story",
                                     Toast.LENGTH_SHORT).show();
+                            Log.d(MainActivity.TAG, "Error posting story");
                         }
                     }
 
@@ -183,51 +192,20 @@ public class MainActivity extends Activity implements SearchFragment.OnSearchCli
         feedDialog.show();
     }
 
-    class GetUserInfoAsyncTask extends AsyncTask<String, Void, Integer> {
-        ProgressDialog pd;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd = new ProgressDialog(MainActivity.this);
-            pd.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            if (ConnectionUtil.isConnected(MainActivity.this)) {
-
-                user = ConnectionUtil.getUserInfo(params[0]);
-                if (user.getRepos_url() != null && !user.getRepos_url().isEmpty()) {
-                    user.setRepositories(ConnectionUtil.getRepositories(user.getRepos_url()));
-                }
-                return ConnectionUtil.OK;
-
-            } else {
-                return ConnectionUtil.NO_INTERNET_CONNECTION;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Integer resultCode) {
-            super.onPostExecute(resultCode);
-            pd.cancel();
-            switch (resultCode) {
-                case ConnectionUtil.OK:
-                    UserProfileFragment userProfileFragment = new UserProfileFragment();
-                    Bundle args = new Bundle();
-                    args.putParcelable("user", user);
-                    userProfileFragment.setArguments(args);
-                    getFragmentManager().beginTransaction().replace(R.id.content_frame, userProfileFragment,
-                            "user_profile_fr").addToBackStack(
-                            "user_profile_fr").commit();
-                    break;
-            }
-
-
-        }
+    private void showUserProfileFragment() {
+        UserProfileFragment userProfileFragment = new UserProfileFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", user);
+        userProfileFragment.setArguments(args);
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, userProfileFragment,
+                "user_profile_fr").addToBackStack(
+                "user_profile_fr").commit();
     }
 
 
+    @Override
+    public void onUserProfileOpenClicked(User user) {
+        this.user = user;
+        showUserProfileFragment();
+    }
 }
