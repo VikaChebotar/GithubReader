@@ -5,32 +5,23 @@
     android:orientation="vertical"
     android:id="@+id/mainProfileCont"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent"
-        >
+        android:background="@android:color/white">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/progressBar1cont"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/progressBar1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
 
 
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp">
+            android:layout_marginTop="@dimen/profile_page_margin_top"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="@dimen/default_margin">
 
             <ProgressBar
                 android:id="@+id/progressBar3"
@@ -41,20 +32,19 @@
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profile_image"
-                android:layout_width="137dp"
-                android:layout_height="137dp"
-                app:border_width="1dp"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"
+                app:border_width="@dimen/one_dp"
                 android:layout_centerInParent="true"
                 android:layout_below="@+id/usernameCompany"
-                app:border_color="#FF000000"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" />
+                app:border_color="@color/textColor"
+                android:layout_margin="@dimen/default_margin" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Username, Company"
+                android:textSize="@dimen/default_text_size"
+
                 android:id="@+id/usernameCompany"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true" />
@@ -66,12 +56,12 @@
                 android:layout_below="@id/profile_image"
                 android:src="@drawable/floppy"
                 android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent" />
+                android:padding="@dimen/small_margin"
+                android:background="@drawable/imagebutton_selector" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
 
                 android:layout_toLeftOf="@+id/profile_image"
                 android:layout_alignTop="@+id/profile_image"
@@ -84,24 +74,32 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:textSize="18sp"
-                    android:text="31 followers"
+                    android:textSize="@dimen/default_text_size"
+
                     android:id="@+id/followers" />
 
-                <ImageButton
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/openBrowserBtn"
-                    android:src="@drawable/globe"
-                    android:background="@android:color/transparent" />
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/imagebutton_selector"
+                        android:padding="5dp"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/openBrowserBtn"
+                        android:src="@drawable/globe" />
+                </RelativeLayout>
+
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+
                 android:layout_toRightOf="@+id/profile_image"
                 android:layout_alignTop="@+id/profile_image"
                 android:layout_alignBottom="@+id/profile_image"
@@ -113,17 +111,25 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:textSize="18sp"
-                    android:text="143 followed"
+                    android:textSize="@dimen/default_text_size"
+
                     android:id="@+id/following" />
 
-                <ImageButton
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/shareBtn"
-                    android:src="@drawable/share"
-                    android:background="@android:color/transparent" />
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/small_margin"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/shareBtn"
+                        android:src="@drawable/share"
+                        android:background="@drawable/imagebutton_selector" />
+
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -132,38 +138,27 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginTop="26dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="5dp"
-            android:text="Repositories"
+            android:textSize="@dimen/text_size_rep_label"
+            android:layout_marginTop="@dimen/padding_button_search"
+            android:layout_marginLeft="@dimen/padding_button_search"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:text="@string/reposit_label"
             android:id="@+id/repositoriesLabel" />
 
         <View
             android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/black" />
+            android:layout_height="@dimen/one_dp"
+            android:id="@+id/line"
+            android:background="@color/textColor" />
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/repositoriesList"
-            android:dividerHeight="10dp"
+            android:dividerHeight="@dimen/default_margin"
             android:divider="@android:color/transparent"
-            android:padding="10dp" />
+            android:padding="@dimen/default_margin" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/progressBar2cont"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
 
     </LinearLayout>
 </ScrollView>

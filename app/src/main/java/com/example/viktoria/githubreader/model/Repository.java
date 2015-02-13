@@ -1,10 +1,11 @@
-package com.example.viktoria.githubreader;
+package com.example.viktoria.githubreader.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Created by viktoria on 11.02.15.
+ * This is class represents repository.
+ * Implements Parcelable to enable putting User objects in bundle to save instanse state or pass it between fragments in Intent
  */
 public class Repository implements Parcelable {
     private String name;

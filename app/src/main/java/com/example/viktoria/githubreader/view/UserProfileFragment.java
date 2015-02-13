@@ -1,4 +1,4 @@
-package com.example.viktoria.githubreader;
+package com.example.viktoria.githubreader.view;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,6 +19,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.viktoria.githubreader.R;
+import com.example.viktoria.githubreader.model.User;
+import com.example.viktoria.githubreader.util.DatabaseHandler;
 
 import java.io.InputStream;
 
@@ -44,23 +49,23 @@ public class UserProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.user_profile, container, false);
-        user = getArguments().getParcelable("user");
+        user = getArguments().getParcelable(getString(R.string.user_intent_key));
         usernameCompany = (TextView) rootView.findViewById(R.id.usernameCompany);
         followers = (TextView) rootView.findViewById(R.id.followers);
         following = (TextView) rootView.findViewById(R.id.following);
+
         avatar = (CircleImageView) rootView.findViewById(R.id.profile_image);
         openBrowserBtn = (ImageButton) rootView.findViewById(R.id.openBrowserBtn);
         saveBtn = (ImageButton) rootView.findViewById(R.id.saveBtn);
         shareBtn = (ImageButton) rootView.findViewById(R.id.shareBtn);
         repList = (ListView) rootView.findViewById(R.id.repositoriesList);
-
         if (user.getCompany() != null & !user.getCompany().isEmpty()) {
             usernameCompany.setText(user.getLogin() + ", " + user.getCompany());
         } else {
             usernameCompany.setText(user.getLogin());
         }
-        followers.setText(user.getFollowers() + System.getProperty("line.separator") + " followers" + System.getProperty("line.separator"));
-        following.setText(user.getFollowing() + System.getProperty("line.separator") + " following" + System.getProperty("line.separator"));
+        followers.setText(user.getFollowers() + System.getProperty("line.separator") + getString(R.string.followers) + System.getProperty("line.separator"));
+        following.setText(user.getFollowing() + System.getProperty("line.separator") + getString(R.string.following) + System.getProperty("line.separator"));
         if (user.getAvatar_url() != null && !user.getAvatar_url().isEmpty()) {
             new DownloadImageTask(avatar)
                     .execute(user.getAvatar_url());
@@ -86,7 +91,7 @@ public class UserProfileFragment extends Fragment {
                         if (!dh.checkIfExists(user)) {
                             dh.addUsers(user);
                         } else {
-                            //TODO
+                          Toast.makeText(getActivity(),getString(R.string.toast_save_db), Toast.LENGTH_SHORT).show();
                         }
 
                         return null;
@@ -102,7 +107,7 @@ public class UserProfileFragment extends Fragment {
                 mCallback.onShareClicked();
             }
         });
-        if (user.getRepositories() != null) {
+        if (user.getRepositories() != null || user.getRepositories().size()==0) {
             RepositoriesListAdapter adapter = new RepositoriesListAdapter(getActivity(), R.layout.repository_item, user.getRepositories());
             repList.setVisibility(View.VISIBLE);
             repList.setAdapter(adapter);
@@ -115,6 +120,10 @@ public class UserProfileFragment extends Fragment {
                     sView.scrollTo(0, 0);
                 }
             });
+        }
+        else{
+            rootView.findViewById(R.id.repositoriesLabel).setVisibility(View.GONE);
+            rootView.findViewById(R.id.line).setVisibility(View.GONE);
         }
         return rootView;
     }
@@ -129,7 +138,7 @@ public class UserProfileFragment extends Fragment {
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " " + getActivity().getString(R.string.castExc) + " " + OnShareFbClickListener.class);
+                    + getActivity().getString(R.string.castExc) + OnShareFbClickListener.class);
         }
     }
 
@@ -170,19 +179,23 @@ public class UserProfileFragment extends Fragment {
             pb.setVisibility(View.GONE);
         }
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("user", user);
+        outState.putParcelable(getString(R.string.user_intent_key), user);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            user = savedInstanceState.getParcelable("user");
+            user = savedInstanceState.getParcelable(getString(R.string.user_intent_key)
+
+            );
         }
     }
+
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)

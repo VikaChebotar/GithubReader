@@ -1,10 +1,8 @@
-package com.example.viktoria.githubreader;
+package com.example.viktoria.githubreader.view;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,9 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.viktoria.githubreader.R;
+import com.example.viktoria.githubreader.model.User;
+import com.example.viktoria.githubreader.util.ConnectionUtil;
 
 /**
- * Created by viktoria on 11.02.15.
+ * Fragment that allows user to enter Github username and search for this user.
+ * Notifies activity that user exists and acitivity need to open UserProfileFragment by OnUserProfileOpenListener.
  */
 public class SearchFragment extends Fragment {
     private View rootView;
@@ -45,7 +49,7 @@ public class SearchFragment extends Fragment {
                 if (!usernameET.getText().toString().isEmpty()) {
                     new GetUserInfoAsyncTask().execute(usernameET.getText().toString());
                 } else {
-                    //TODO
+                  Toast.makeText(getActivity(), getString(R.string.no_username_toast), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -71,7 +75,7 @@ public class SearchFragment extends Fragment {
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " " + getActivity().getString(R.string.castExc) + " " + OnUserProfileOpenListener.class);
+                    + getActivity().getString(R.string.castExc) + OnUserProfileOpenListener.class);
         }
     }
 
@@ -84,7 +88,7 @@ public class SearchFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             loadingPD = new LoadingProgressDialogFragment();
-            loadingPD.show(((Activity) mCallback).getFragmentManager(), "loadingPD");
+            loadingPD.show(((Activity) mCallback).getFragmentManager(), getString(R.string.loadingPDtag));
 
         }
 
@@ -93,12 +97,12 @@ public class SearchFragment extends Fragment {
             this.params = params;
             if (ConnectionUtil.isConnected(getActivity())) {
                 try {
-                    user = ConnectionUtil.getUserInfo(params[0]);
+                    user = ConnectionUtil.getUserInfo(params[0], getActivity());
                     if (user == null) {
                         return ConnectionUtil.NOT_FOUND;
                     }
                     if (user.getRepos_url() != null && !user.getRepos_url().isEmpty()) {
-                        user.setRepositories(ConnectionUtil.getRepositories(user.getRepos_url()));
+                        user.setRepositories(ConnectionUtil.getRepositories(user.getRepos_url(), getActivity()));
                     }
                     return ConnectionUtil.OK;
                 } catch (Exception e) {
@@ -122,15 +126,15 @@ public class SearchFragment extends Fragment {
                     break;
                 case ConnectionUtil.NOT_FOUND:
 
-                    new NotFoundUserDialogFragment().show(((Activity) mCallback).getFragmentManager(), "notFoundUserDF");
+                    new NotFoundUserDialogFragment().show(((Activity) mCallback).getFragmentManager(), getString(R.string.notFountUserDFtag));
                     break;
                 case ConnectionUtil.NO_INTERNET_CONNECTION:
                     if (getFragmentManager() != null)
-                        new NoInternetConDialogFragment().show(((Activity) mCallback).getFragmentManager(), "noIntConDF");
+                        new NoInternetConDialogFragment().show(((Activity) mCallback).getFragmentManager(), getString(R.string.noIntConDFtag));
                     break;
                 case ConnectionUtil.EXCEPTION:
                     if (getFragmentManager() != null)
-                        new ExceptionDialogFragment().show(((Activity) mCallback).getFragmentManager(), "excDF");
+                        new ExceptionDialogFragment().show(((Activity) mCallback).getFragmentManager(), getString(R.string.excDFtag));
                     break;
             }
 

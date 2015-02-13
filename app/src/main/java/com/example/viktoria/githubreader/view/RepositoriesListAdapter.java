@@ -1,4 +1,4 @@
-package com.example.viktoria.githubreader;
+package com.example.viktoria.githubreader.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.viktoria.githubreader.R;
+import com.example.viktoria.githubreader.model.Repository;
+
 import java.util.List;
 
 /**
- * Created by viktoria on 11.02.15.
+ * Adapter to show list of repositories in UserProfileFragment
  */
 public class RepositoriesListAdapter extends ArrayAdapter<Repository> {
     Context context;
@@ -65,7 +68,7 @@ public class RepositoriesListAdapter extends ArrayAdapter<Repository> {
         if (rep_item != null) {
             holder.repName.setText(rep_item.getName());
             if (!rep_item.getLanguage().isEmpty()) {
-                holder.repLang.setText("Language: " + rep_item.getLanguage());
+                holder.repLang.setText(context.getString(R.string.language_label) + rep_item.getLanguage());
                 holder.repLang.setVisibility(View.VISIBLE);
             } else {
                 holder.repLang.setVisibility(View.GONE);

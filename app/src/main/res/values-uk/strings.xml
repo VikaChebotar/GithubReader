@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="btn_dialog">Ок</string>
+    <string name="btn_search">Розкажіть мені більше</string>
+    <string name="castExc">" має імплентувати"</string>
+    <string name="error_log">"Помилка: "</string>
+    <string name="exc_dialog">Сталась помилка</string>
+    <string name="followers">" підписника"</string>
+    <string name="following">" слідкуємих"</string>
+    <string name="input_hint">якийсь логін Гітхаба</string>
+    <string name="input_label">Введіть логін, щоб дізнатись більше:</string>
+    <string name="language_label">"Мова: "</string>
+    <string name="loading_dialog">Загрузка...</string>
+    <string name="login_log">Успішно зареєстрований</string>
+    <string name="no_int_con_dialog">Не знайдено інтернет-зєднання. Перевірте зєднання та спробуйте ще раз!</string>
+    <string name="publish_canceled">Публікаю посту скасовано</string>
+    <string name="publish_error">Помилка при публікації посту</string>
+    <string name="publish_log">"Пост опублікований з id: "</string>
+    <string name="sqlite_user_added">"Дані про користувача збережені в локальну базу. Id: "</string>
+    <string name="user_not_found_dialog">Пользователь с таким именем не существует!</string>
+    <string name="reposit_label">Репозиторії</string>
+    <string name="toast_save_db">Інформація про даного користувача вже була збережена раніше</string>
+    <string name="font_error">"Не можливо встановити кастомний шрифт "</string>
+    <string name="no_username_toast">Введіть логін!</string>
+</resources>

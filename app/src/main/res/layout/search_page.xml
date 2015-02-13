@@ -1,38 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="Input username to know more:"
+        android:textSize="@dimen/default_text_size"
+        android:text="@string/input_label"
         android:layout_above="@+id/usernameET"
-        android:layout_marginBottom="60dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginBottom="@dimen/search_page_margin"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="@dimen/default_margin"
+        android:paddingRight="@dimen/default_margin"
+        android:id="@+id/textView" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/usernameET"
-        android:layout_marginLeft="55.3dp"
-        android:layout_marginRight="55.3dp"
-        android:paddingLeft="10dp"
-        android:textSize="18sp"
+        android:layout_marginLeft="@dimen/search_page_margin"
+        android:layout_marginRight="@dimen/search_page_margin"
+        android:singleLine="true"
+        android:paddingLeft="@dimen/default_margin"
+        android:imeOptions="actionDone"
+        android:textSize="@dimen/default_text_size"
         android:layout_centerInParent="true"
-        android:hint="some Github username" />
+        android:hint="@string/input_hint" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tell me more"
+        android:text="@string/btn_search"
         android:id="@+id/searchBtn"
-        android:textSize="18sp"
-        android:padding="10dp"
+        android:textSize="@dimen/default_text_size"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:paddingTop="@dimen/default_margin"
+        android:paddingBottom="@dimen/default_margin"
+        android:paddingLeft="@dimen/padding_button_search"
+        android:background="@drawable/button_selector"
+        android:paddingRight="@dimen/padding_button_search"
         android:drawableLeft="@drawable/search"
         android:layout_below="@+id/usernameET"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="@dimen/search_page_margin"
         android:layout_centerHorizontal="true" />
 
 

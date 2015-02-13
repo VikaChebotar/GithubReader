@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Github Reader</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="castExc">must implement</string>
-    <string name="facebook_app_id">811881195558795</string>
+    <string name="app_name" translatable="false">Github Reader</string>
+    <string name="facebook_app_id" translatable="false">811881195558795</string>
+    <string name="url_get_users" translatable="false">https://api.github.com/users/</string>
+    <string name="castExc">" must implement "</string>
+    <string name="status" translatable="false">"status: "</string>
+    <string name="response" translatable="false">"resp: "</string>
+    <string name="sqlite_user_added">"User data saved to local db. Id: "</string>
+    <string name="loading_dialog">Loading...</string>
+    <string name="user_intent_key" translatable="false">user</string>
+    <string name="search_fr_tag" translatable="false">search_fr</string>
+    <string name="error_log">"Error: "</string>
+    <string name="publish_log">"Published story with id: "</string>
+    <string name="login_log">Successfully logged in</string>
+    <string name="publish_canceled">Publish cancelled</string>
+    <string name="publish_error">Error posting story</string>
+    <string name="user_profile_intent_key" translatable="false">user_profile_fr</string>
+    <string name="language_label">"Language: "</string>
+    <string name="followers">" followers"</string>
+    <string name="following">" following"</string>
+    <string name="loadingPDtag" translatable="false">loadingPD</string>
+    <string name="notFountUserDFtag" translatable="false">notFoundUserDF</string>
+    <string name="noIntConDFtag" translatable="false">noIntConDF</string>
+    <string name="excDFtag" translatable="false">excDF</string>
+    <string name="font_name" translatable="false">DEVROYUN.ttf</string>
+    <string name="input_label">Input username to know more:</string>
+    <string name="input_hint">some Github username</string>
+    <string name="btn_search">Tell me more</string>
+    <string name="btn_dialog">Ok</string>
+    <string name="exc_dialog">An error has occurred</string>
+    <string name="no_int_con_dialog">Internet connection not found. Check connection and retry!</string>
+    <string name="user_not_found_dialog">This user name does not exist!</string>
+    <string name="reposit_label">Repositories</string>
+    <string name="toast_save_db">User data is already saved</string>
+    <string name="font_error">"Can not set custom font "</string>
+    <string name="default_font" translatable="false">SERIF</string>
+    <string name="no_username_toast">Please enter username!</string>
 </resources>

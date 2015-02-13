@@ -1,23 +1,24 @@
-package com.example.viktoria.githubreader;
+package com.example.viktoria.githubreader.view;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
+
+import com.example.viktoria.githubreader.R;
 
 /**
- * Created by Вика on 12.02.2015.
+ * DialogFragment to promt user that there is no internet connection
  */
-public class NotFoundUserDialogFragment extends DialogFragment {
+public class NoInternetConDialogFragment extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder
-                .setMessage("Пользователь с таким именем не существует!")
+                .setMessage(getString(R.string.no_int_con_dialog))
                 .setCancelable(true)
-                .setNegativeButton("Ок",
+                .setNegativeButton(getString(R.string.btn_dialog),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
