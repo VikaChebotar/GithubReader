@@ -36,4 +36,5 @@
     <string name="font_error">"Can not set custom font "</string>
     <string name="default_font" translatable="false">SERIF</string>
     <string name="no_username_toast">Please enter username!</string>
+    <string name="save_db_suc">User data saved to local db</string>
 </resources>

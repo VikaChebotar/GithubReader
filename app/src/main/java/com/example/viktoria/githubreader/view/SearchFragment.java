@@ -79,6 +79,11 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    /**
+     * This async task class execute http request to get User by its username.
+     * If request was successful, it notifies activity and pass user object.
+     * If not - alert dialog is shown.
+     */
     class GetUserInfoAsyncTask extends AsyncTask<String, Void, Integer> {
         LoadingProgressDialogFragment loadingPD;
         String[] params;

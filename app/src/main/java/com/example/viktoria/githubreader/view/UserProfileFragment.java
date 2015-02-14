@@ -30,7 +30,12 @@ import java.io.InputStream;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by viktoria on 11.02.15.
+ * This fragment shows user information and repositories.
+ * The object of user is passed to it through intent arguments.
+ * Fragment view has 3 buttons:
+ * to open user profile in browser (activity with intent with ACTION_VIEW is called),
+ * to save user information in local database (DatabaseHandler is used),
+ * to share user profile link in facebook (fragment notifies activity, that is responsible for that).
  */
 public class UserProfileFragment extends Fragment {
     private View rootView;
@@ -53,7 +58,6 @@ public class UserProfileFragment extends Fragment {
         usernameCompany = (TextView) rootView.findViewById(R.id.usernameCompany);
         followers = (TextView) rootView.findViewById(R.id.followers);
         following = (TextView) rootView.findViewById(R.id.following);
-
         avatar = (CircleImageView) rootView.findViewById(R.id.profile_image);
         openBrowserBtn = (ImageButton) rootView.findViewById(R.id.openBrowserBtn);
         saveBtn = (ImageButton) rootView.findViewById(R.id.saveBtn);
@@ -85,16 +89,29 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 new AsyncTask() {
+                    boolean isAlreadyExists = false;
                     @Override
                     protected Object doInBackground(Object[] params) {
                         DatabaseHandler dh = DatabaseHandler.getInstance(getActivity());
                         if (!dh.checkIfExists(user)) {
                             dh.addUsers(user);
+                            isAlreadyExists=false;
                         } else {
-                          Toast.makeText(getActivity(),getString(R.string.toast_save_db), Toast.LENGTH_SHORT).show();
+                            isAlreadyExists=true;
                         }
 
                         return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        super.onPostExecute(o);
+                        if(isAlreadyExists){
+                            Toast.makeText(getActivity(),getString(R.string.toast_save_db), Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getActivity(),getString(R.string.save_db_suc), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }.execute();
 
@@ -111,9 +128,10 @@ public class UserProfileFragment extends Fragment {
             RepositoriesListAdapter adapter = new RepositoriesListAdapter(getActivity(), R.layout.repository_item, user.getRepositories());
             repList.setVisibility(View.VISIBLE);
             repList.setAdapter(adapter);
+            //adjust scroll view to show all listview
             setListViewHeightBasedOnChildren(repList);
-
             final ScrollView sView = (ScrollView) rootView.findViewById(R.id.mainProfileCont);
+            //scroll to top
             sView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -142,7 +160,11 @@ public class UserProfileFragment extends Fragment {
         }
     }
 
-
+    /**
+     * Async task that downloads user avatar and sets it to ImageView passed in constructor.
+     * If image is not downloaded - sets placeholder.
+     * Shows progress bar while downloading.
+     */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         CircleImageView bmImage;
         ProgressBar pb;
@@ -196,7 +218,11 @@ public class UserProfileFragment extends Fragment {
         }
     }
 
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
+    /**
+     * resize listview to exactly accommodate the height of its items
+     * @param listView listview that will be changed
+     */
+    protected static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
             return;

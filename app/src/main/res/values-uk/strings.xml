@@ -22,4 +22,5 @@
     <string name="toast_save_db">Інформація про даного користувача вже була збережена раніше</string>
     <string name="font_error">"Не можливо встановити кастомний шрифт "</string>
     <string name="no_username_toast">Введіть логін!</string>
+    <string name="save_db_suc">Дані про користувача збережені в локальну базу</string>
 </resources>
